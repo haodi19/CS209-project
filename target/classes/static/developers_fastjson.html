@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>developers</title>
+    <script src="https://s3.pstatp.com/cdn/expire-1-M/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+</head>
+
+<style>
+    #num {
+        text-align: center;
+    }
+
+    #returnButton{
+        text-align: center;
+    }
+
+
+</style>
+
+<body>
+<h1 id="num"></h1>
+<div id="top10dev"></div>
+<div id ="returnButton"><button id="returnHome" onclick="returnHome()">Return</button></div>
+
+</body>
+
+<script>
+    function returnHome() {
+        window.location.href = 'index.html'
+    }
+
+    function getChart(x_axis, commitCounts, containerId) {
+        return Highcharts.chart(containerId, {
+            chart: {
+                type: 'bar'
+            },
+            title: {
+                text: 'Top 10 Active Developers'
+            },
+            subtitle: {
+                text: 'Repository: fastjson'
+            },
+            xAxis: {
+                categories: x_axis,
+                title: {
+                    text: "Developer"
+                }
+            },
+            yAxis: {
+                min: 0,
+                title: {
+                    text: 'Number of Commits',
+                    align: 'high'
+                },
+                labels: {
+                    overflow: 'justify'
+                }
+            },
+            tooltip: {
+                valueSuffix: ''
+            },
+            plotOptions: {
+                bar: {
+                    dataLabels: {
+                        enabled: true,
+                        allowOverlap: true // 允许数据标签重叠
+                    }
+                }
+            },
+            legend: {
+                layout: 'vertical',
+                align: 'right',
+                verticalAlign: 'top',
+                x: -40,
+                y: 100,
+                floating: true,
+                borderWidth: 1,
+                backgroundColor: ((Highcharts.theme && Highcharts.theme.legendBackgroundColor) || '#FFFFFF'),
+                shadow: true
+            },
+            series: [{
+                name: 'Number of Commits',
+                data: commitCounts
+            }]
+        });
+    }
+
+    function showDevelopers() {
+        $.ajax({
+            url: '/fastjson/repo/developerNums',
+            method: 'get',
+            success: function (res) {
+                $("#num").text("Total Developer Number: " + res);
+
+            },
+        })
+
+        $.ajax({
+            url: '/fastjson/repo/top10ActiveDevelopers',
+            method: 'get',
+            success: function (res) {
+                names = []
+                commitCounts = []
+                for (let i = 0; i < res.length; i++) {
+                    names[i] = res[i].name
+                    commitCounts[i] = res[i].commitCounts
+                }
+                getChart(names ,commitCounts, 'top10dev')
+
+            },
+        })
+    }
+
+    showDevelopers()
+
+</script>
+
+</html>

@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>issues</title>
+    <script src="https://s3.pstatp.com/cdn/expire-1-M/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+</head>
+
+<style>
+    #totalNums {
+        text-align: center;
+    }
+
+    #returnButton, #timeButton, #textButton {
+        text-align: center;
+    }
+
+    #num {
+        width: 600px;
+        display: inline-block;
+        margin-left: 5%;
+    }
+
+    #percentage {
+        display: inline-block;
+    }
+
+    #time, #textAnalyze {
+        display: none;
+        margin: auto;
+    }
+    #topicAnalyze{
+        display: none;
+        margin: auto;
+        width: 600px;
+    }
+
+</style>
+
+<body>
+<h1 id="totalNums"></h1>
+<br>
+<div>
+    <div id="num"></div>
+    <div id="percentage"></div>
+</div>
+<br><br>
+<div id='timeButton'>
+    <button id="showTime" onclick="showTime()">Show Typical Resolution Time</button>
+</div>
+<br><br>
+<div id="time"></div>
+<br><br>
+<div id='textButton'>
+    <button id="showTextAnalyze" onclick="showTextualAnalyze()">Show Textual Analyze</button>
+</div>
+<br><br>
+<div id="textAnalyze"></div>
+<br><br>
+<div id="topicAnalyze"></div>
+<br><br>
+<div id="returnButton">
+    <button id="returnHome" onclick="returnHome()">Return</button>
+</div>
+<br><br>
+</body>
+
+<script>
+    function returnHome() {
+        window.location.href = 'index.html'
+    }
+
+    function getIssueNumberChart(data) {
+        return Highcharts.chart('num', {
+            chart: {
+                type: 'column'
+            },
+            title: {
+                text: 'Issue Numbers'
+            },
+            subtitle: {
+                text: 'Repository: fastjson'
+            },
+            xAxis: {
+                categories: [
+                    'Open Issue', 'Closed Issue'
+                ],
+                crosshair: true
+            },
+            yAxis: {
+                min: 0,
+                title: {
+                    text: 'Issue Numbers'
+                }
+            },
+            tooltip: {
+                // head + 每个 point + footer 拼接成完整的 table
+                headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+                pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+                    '<td style="padding:0"><b>{point.y}</b></td></tr>',
+                footerFormat: '</table>',
+                shared: true,
+                useHTML: true
+            },
+            plotOptions: {
+                column: {
+                    borderWidth: 0,
+                    maxPointWidth: 50
+                }
+            },
+            series: [{
+                name: 'Issue Number',
+                data: data
+            }]
+        });
+    }
+
+    function getPieChart(open_y, closed_y) {
+        return Highcharts.chart('percentage', {
+            chart: {
+                plotBackgroundColor: null,
+                plotBorderWidth: null,
+                plotShadow: false,
+                type: 'pie'
+            },
+            title: {
+                text: 'Issue Numbers Percentage in fastjson'
+            },
+            tooltip: {
+                pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+            },
+            plotOptions: {
+                pie: {
+                    allowPointSelect: true,
+                    cursor: 'pointer',
+                    dataLabels: {
+                        enabled: false
+                    },
+                    showInLegend: true
+                }
+            },
+            series: [{
+                name: 'Issue Number',
+                colorByPoint: true,
+                data: [{
+                    name: 'Open Issue',
+                    y: open_y,
+                }, {
+                    name: 'Closed Issue',
+                    y: closed_y
+                }]
+            }]
+        });
+    }
+
+    function getBarChart(x_axis, resolutionTime, containerId) {
+        return Highcharts.chart(containerId, {
+            chart: {
+                type: 'bar'
+            },
+            title: {
+                text: 'Typical Issue Resolution Time'
+            },
+            subtitle: {
+                text: 'Repository: fastjson'
+            },
+            xAxis: {
+                categories: x_axis
+            },
+            yAxis: {
+                min: 0,
+                title: {
+                    text: 'time (days)',
+                    align: 'high'
+                },
+                labels: {
+                    overflow: 'justify'
+                }
+            },
+            tooltip: {
+                valueSuffix: ' days'
+            },
+            plotOptions: {
+                bar: {
+                    dataLabels: {
+                        enabled: true,
+                        allowOverlap: true // 允许数据标签重叠
+                    }
+                }
+            },
+            legend: {
+                layout: 'vertical',
+                align: 'right',
+                verticalAlign: 'top',
+                x: -40,
+                y: 100,
+                floating: true,
+                borderWidth: 1,
+                backgroundColor: ((Highcharts.theme && Highcharts.theme.legendBackgroundColor) || '#FFFFFF'),
+                shadow: true
+            },
+            series: [{
+                name: 'time(days)',
+                data: resolutionTime,
+            }]
+        });
+    }
+
+    function getTop25Keywords(x_axis, data){
+        return Highcharts.chart('textAnalyze',{
+            chart: {
+                type: 'column'
+            },
+            title: {
+                text: 'Top 25 Issue-keyword'
+            },
+            subtitle: {
+                text: 'Repository: fastjson'
+            },
+            xAxis: {
+                categories: x_axis,
+                crosshair: true
+            },
+            yAxis: {
+                min: 0,
+                title: {
+                    text: 'Word Frequency'
+                }
+            },
+            tooltip: {
+                // head + 每个 point + footer 拼接成完整的 table
+                headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+                pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+                    '<td style="padding:0"><b>{point.y}</b></td></tr>',
+                footerFormat: '</table>',
+                shared: true,
+                useHTML: true
+            },
+            plotOptions: {
+                column: {
+                    borderWidth: 0
+                }
+            },
+            series: [{
+                name: 'frequency',
+                data: data
+            }]
+        });
+    }
+
+    function getTopTopic(x_axis,data){
+        return Highcharts.chart('topicAnalyze',{
+            chart: {
+                type: 'column'
+            },
+            title: {
+                text: 'Top Topic in Issue Discussion'
+            },
+            subtitle: {
+                text: 'Repository: fastjson'
+            },
+            xAxis: {
+                categories: x_axis,
+                crosshair: true
+            },
+            yAxis: {
+                min: 0,
+                title: {
+                    text: 'Topic Hotness'
+                }
+            },
+            tooltip: {
+                // head + 每个 point + footer 拼接成完整的 table
+                headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+                pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+                    '<td style="padding:0"><b>{point.y}</b></td></tr>',
+                footerFormat: '</table>',
+                shared: true,
+                useHTML: true
+            },
+            plotOptions: {
+                column: {
+                    borderWidth: 0
+                }
+            },
+            series: [{
+                name: 'Topic Hotness',
+                data: data
+            }]
+        });
+    }
+
+    var openIssueNum = 0
+    var closedIssueNum = 0
+    var averageDays = 0;
+    var rangeDays = 0;
+    var stdDays = 0;
+
+    function showIssues() {
+        $.ajax({
+            url: '/fastjson/repo/openIssueNums',
+            method: 'get',
+            async: false,
+            success: function (res) {
+                openIssueNum = res
+            },
+        })
+
+        $.ajax({
+            url: '/fastjson/repo/closedIssueNums',
+            method: 'get',
+            async: false,
+            success: function (res) {
+                closedIssueNum = res
+            },
+        })
+
+        $.ajax({
+            url: '/fastjson/repo/typicalIssueResolutionTime',
+            method: 'get',
+            success: function (res) {
+                averageDays = res[0];
+                rangeDays = res[1];
+                stdDays = res[2];
+                getBarChart(["Average", "Range", "Standard Deviation"], [averageDays, rangeDays, stdDays], "time")
+
+            },
+        })
+
+        $.ajax({
+            url: '/fastjson/repo/top25Keywords',
+            method: 'get',
+            success: function (res) {
+                var words = Object.keys(res);
+                var frequency = Object.values(res);
+                getTop25Keywords(words,frequency)
+            },
+        })
+
+        $.ajax({
+            url: '/fastjson/repo/top5Topic',
+            method: 'get',
+            success: function (res) {
+                var topics = Object.keys(res);
+                var hotness = Object.values(res);
+                getTopTopic(topics, hotness)
+            },
+        })
+
+        document.getElementById("totalNums").innerHTML = "Total Issue Number: " + (openIssueNum + closedIssueNum)
+        getIssueNumberChart([openIssueNum, closedIssueNum])
+        getPieChart(openIssueNum / (openIssueNum + closedIssueNum), closedIssueNum / (openIssueNum + closedIssueNum))
+
+    }
+
+    function showTime() {
+        var time = document.getElementById("time");
+        var button = document.getElementById("showTime");
+        if (time.style.display === 'block') {
+            time.style.display = 'none'
+            button.innerHTML = 'Show Typical Resolution Time'
+        } else {
+            time.style.display = 'block'
+            button.innerHTML = 'Hide Typical Resolution Time'
+        }
+    }
+
+    function showTextualAnalyze() {
+        var text = document.getElementById("textAnalyze");
+        var topic = document.getElementById("topicAnalyze");
+        var button = document.getElementById("showTextAnalyze");
+        if (text.style.display === 'block') {
+            text.style.display = 'none'
+            topic.style.display = 'none'
+            button.innerHTML = 'Show Textual Analyze'
+        } else {
+            text.style.display = 'block'
+            topic.style.display = 'block'
+            button.innerHTML = 'Hide Textual Analyze'
+        }
+    }
+
+    showIssues()
+
+</script>
+
+</html>

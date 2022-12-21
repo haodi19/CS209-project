@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Demo</title>
+    <script src="https://s3.pstatp.com/cdn/expire-1-M/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+
+
+</head>
+
+<style>
+    #title, #r1, #r2 {
+        text-align: center;
+    }
+
+    #dfButton, #ifButton, #rfButton, #daButton, #iaButton, #raButton{
+        text-align: center;
+    }
+
+
+</style>
+<body>
+<h1 id="title">CS209A Final Project</h1>
+
+<h3 id="r1">Repository: fastjson</h3>
+<br>
+
+<div>
+<div id="dfButton">
+    <button id="developers_fastjson" onclick="showDevelopersInfastjson()">Show Developers</button>
+</div>
+
+<br>
+
+<div id="ifButton">
+    <button id="issues_fastjson" onclick="showIssuesInfastjson()">Show Issues</button>
+</div>
+
+<br>
+
+<div id="rfButton">
+    <button id="release_fastjson" onclick="showReleasesAndCommitsInfastjson()">Show Releases&Commits</button>
+</div>
+</div>
+
+<br>
+<h3 id="r2">Repository: arthas</h3>
+<br>
+
+<div>
+<div id="daButton">
+    <button id="developers_arthas" onclick="showDevelopersInarthas()">Show Developers</button>
+</div>
+
+<br>
+
+<div id="iaButton">
+    <button id="issues_arthas" onclick="showIssuesInarthas()">Show Issues</button>
+</div>
+
+<br>
+
+<div id="raButton">
+    <button id="release_arthas" onclick="showReleasesAndCommitsInarthas()">Show Releases&Commits</button>
+</div>
+</div>
+
+</body>
+<script>
+
+
+    function showDevelopersInfastjson() {
+        window.location.href = 'developers_fastjson.html'
+    }
+
+    function showIssuesInfastjson() {
+        window.location.href = 'issues_fastjson.html'
+    }
+
+    function showReleasesAndCommitsInfastjson() {
+        window.location.href = 'releasesAndCommits_fastjson.html'
+    }
+
+
+    function showDevelopersInarthas() {
+        window.location.href = 'developers_arthas.html'
+    }
+
+    function showIssuesInarthas() {
+        window.location.href = 'issues_arthas.html'
+    }
+
+    function showReleasesAndCommitsInarthas() {
+        window.location.href = 'releasesAndCommits_arthas.html'
+    }
+
+
+</script>
+</html>

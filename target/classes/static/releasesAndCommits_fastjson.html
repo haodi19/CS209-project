@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>releases and commits</title>
+    <script src="https://s3.pstatp.com/cdn/expire-1-M/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+</head>
+
+<style>
+    #releaseNum {
+        text-align: center;
+    }
+
+    #returnButton {
+        text-align: center;
+    }
+
+    #dst1{
+        display: inline-block;
+        margin-left: 5%;
+    }
+
+    #dst2{
+        display: inline-block;
+    }
+
+    #dst{
+        display: none;
+    }
+
+    #commitButton,#commitNum{
+        text-align: center;
+    }
+
+</style>
+
+<body>
+<h1 id="releaseNum"></h1>
+<div id="cnbr"></div>
+<br><br>
+<div id='commitButton'>
+    <button id="showCommit" onclick="showCommitDistribution()">Show Commit Distribution</button>
+</div>
+<br><br>
+
+
+<div id = "dst">
+    <h1 id = "commitNum"></h1>
+    <br><br>
+    <div id="dst1"></div>
+    <div id="dst2"></div>
+</div>
+<br><br>
+<div id="returnButton">
+    <button id="returnHome" onclick="returnHome()">Return</button>
+</div>
+<br><br>
+</body>
+
+<script>
+    function returnHome() {
+        window.location.href = 'index.html'
+    }
+
+    function getCommitBetweenReleaseChart(x_axis, data) {
+        return Highcharts.chart('cnbr', {
+            chart: {
+                type: 'line'
+            },
+            title: {
+                text: 'Commit Number Between Each Release'
+            },
+            subtitle: {
+                text: 'Repository: fastjson'
+            },
+            xAxis: {
+                categories: x_axis,
+                title: {
+                    text: 'i means the release interval between the i-th release and the (i+1)-th release'
+                }
+            },
+            yAxis: {
+                title: {
+                    text: 'Commit Number'
+                }
+            },
+            plotOptions: {
+                line: {
+                    dataLabels: {
+                        // 开启数据标签
+                        enabled: true
+                    },
+                }
+            },
+            tooltip: {
+                formatter: function () {
+                    return '<span style="font-size:10px">There are ' + this.point.y + ' commits between release ' + this.x + ' and release ' + (parseInt(this.x) + 1) + '</span>'
+                }
+            },
+            series: [{
+                name: 'Commit Number',
+                data: data
+            }]
+        });
+
+    }
+
+    function getCommitDistributionInDayOfWeekChart(data) {
+        return Highcharts.chart('dst1', {
+            chart: {
+                plotBackgroundColor: null,
+                plotBorderWidth: null,
+                plotShadow: false,
+                type: 'pie'
+            },
+            title: {
+                text: 'Commit Time Distribution (Day of Week)'
+            },
+            tooltip: {
+                pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+            },
+            plotOptions: {
+                pie: {
+                    allowPointSelect: true,
+                    cursor: 'pointer',
+                    dataLabels: {
+                        enabled: false
+                    },
+                    showInLegend: true
+                }
+            },
+            series: [{
+                name: 'Commit Number',
+                colorByPoint: true,
+                data: [{
+                    name: 'Weekday',
+                    y: data[0],
+                }, {
+                    name: 'Weekend',
+                    y: data[1]
+                }]
+            }]
+        });
+    }
+
+    function getCommitDistributionInTimeOfDayChart(data) {
+        return Highcharts.chart('dst2', {
+            chart: {
+                plotBackgroundColor: null,
+                plotBorderWidth: null,
+                plotShadow: false,
+                type: 'pie'
+            },
+            title: {
+                text: 'Commit Time Distribution (Time of Day)'
+            },
+            tooltip: {
+                pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+            },
+            plotOptions: {
+                pie: {
+                    allowPointSelect: true,
+                    cursor: 'pointer',
+                    dataLabels: {
+                        enabled: false
+                    },
+                    showInLegend: true
+                }
+            },
+            series: [{
+                name: 'Commit Number',
+                colorByPoint: true,
+                data: [{
+                    name: 'Midnight(0:00 ~ 6:00)',
+                    y: data[0],
+                }, {
+                    name: 'Morning(6:00 ~ 12:00)',
+                    y: data[1]
+                }, {
+                    name: 'Afternoon(12:00 ~ 18:00)',
+                    y: data[2]
+                }, {
+                    name: 'Evening(18:00 ~ 24:00)',
+                    y: data[3]
+                }]
+            }]
+        });
+    }
+
+    var commitNum = 0
+
+    function showReleasesAndCommits() {
+        $.ajax({
+            url: '/fastjson/repo/commitNums',
+            method: 'get',
+            async: false,
+            success: function (res) {
+                commitNum = res
+            },
+        })
+
+        $.ajax({
+            url: '/fastjson/repo/releaseNums',
+            method: 'get',
+            success: function (res) {
+                $("#releaseNum").text("Total Release Number: " + res)
+            },
+        })
+
+        $.ajax({
+            url: '/fastjson/repo/commitNumsBetweenReleases',
+            method: 'get',
+            success: function (res) {
+                var keys = Object.keys(res);
+                var values = Object.values(res);
+                getCommitBetweenReleaseChart(keys, values)
+            },
+        })
+
+        $.ajax({
+            url: '/fastjson/repo/commitNumsDistributionInDayOfWeek',
+            method: 'get',
+            success: function (res) {
+                getCommitDistributionInDayOfWeekChart([res[0] / commitNum, res[1] / commitNum])
+            },
+        })
+
+        $.ajax({
+            url: '/fastjson/repo/commitNumsDistributionInTimeOfDay',
+            method: 'get',
+            success: function (res) {
+                console.log(res)
+                getCommitDistributionInTimeOfDayChart([res[0] / commitNum, res[1] / commitNum, res[2] / commitNum, res[3] / commitNum])
+            },
+        })
+
+        document.getElementById("commitNum").innerHTML = "Total Commit Number: " + commitNum
+    }
+
+    function showCommitDistribution() {
+        var dst = document.getElementById("dst");
+        var button = document.getElementById("showCommit");
+        if (dst.style.display === 'block') {
+            dst.style.display = 'none'
+            button.innerHTML = 'Show Commit Distribution'
+        } else {
+            dst.style.display = 'block'
+            button.innerHTML = 'Hide Commit Distributione'
+        }
+    }
+
+    showReleasesAndCommits()
+
+</script>
+
+</html>
