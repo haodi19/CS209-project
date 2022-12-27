@@ -95,7 +95,7 @@
             },
             tooltip: {
                 formatter: function () {
-                    return '<span style="font-size:10px">There are ' + this.point.y + ' commits between release ' + this.x + ' and release ' + (parseInt(this.x) + 1) + '</span>'
+                    return '<span style="font-size:10px">There are ' + this.point.y + ' commits between release ' + this.x + ' and next release</span>'
                 }
             },
             series: [{
@@ -212,8 +212,8 @@
             url: '/fastjson/repo/commitNumsBetweenReleases',
             method: 'get',
             success: function (res) {
-                var keys = Object.keys(res);
-                var values = Object.values(res);
+                var keys = res[0];
+                var values = res[1];
                 getCommitBetweenReleaseChart(keys, values)
             },
         })
@@ -230,7 +230,6 @@
             url: '/fastjson/repo/commitNumsDistributionInTimeOfDay',
             method: 'get',
             success: function (res) {
-                console.log(res)
                 getCommitDistributionInTimeOfDayChart([res[0] / commitNum, res[1] / commitNum, res[2] / commitNum, res[3] / commitNum])
             },
         })

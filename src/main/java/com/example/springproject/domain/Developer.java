@@ -30,8 +30,8 @@ public class Developer {
 
     @Override
     public String toString() {
-        return "Developer{" +
-                "name='" + name + '\'' +
+        return "Developer{"
+                + "name='" + name + '\'' +
                 ", commitCounts=" + commitCounts +
                 '}';
     }
