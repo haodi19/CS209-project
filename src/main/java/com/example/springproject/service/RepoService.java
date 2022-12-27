@@ -19,7 +19,7 @@ public interface RepoService {
 
     Integer getReleaseNums();
 
-    Map<Integer,Integer> getCommitNumsBetweenReleases();
+    List[] getCommitNumsBetweenReleases();
 
     Integer getCommitNums();
 

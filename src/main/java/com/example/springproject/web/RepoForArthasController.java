@@ -49,7 +49,7 @@ public class RepoForArthasController {
     }
 
     @GetMapping("/commitNumsBetweenReleases")
-    public Map<Integer, Integer> getCommitNumsBetweenReleases(){
+    public List[] getCommitNumsBetweenReleases(){
         return repoService.getCommitNumsBetweenReleases();
     }
 

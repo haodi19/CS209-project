@@ -3,6 +3,7 @@ package com.example.springproject.service;
 import com.example.springproject.dao.RepoDao;
 import com.example.springproject.domain.Developer;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -54,13 +55,24 @@ public class RepoServiceImpl implements RepoService {
     }
 
     @Override
-    public Map<Integer, Integer> getCommitNumsBetweenReleases() {
+    public List[] getCommitNumsBetweenReleases() {
+        List<Map<String, Object>> orderedTagName = repoDao.getOrderedTagName();
+        HashMap<String, Object> zeroRelease = new HashMap<>();
+        zeroRelease.put("tag_name", "zero_release");
+        orderedTagName.add(0, zeroRelease);
+
+        List[] cnbrOrderedList = new List[2];
+        cnbrOrderedList[0] = new ArrayList();
+        cnbrOrderedList[1] = new ArrayList();
+
         List<Map<String, Object>> cnbrList = repoDao.getCommitNumsBetweenReleases();
-        Map<Integer, Integer> cnbrMap = new HashMap<>();
-        cnbrList.forEach(m -> {
-            cnbrMap.put((int)(long) m.get("releaseId"), (int)(long) m.get("commitNums"));
-        });
-        return cnbrMap;
+
+        for (int i = 0; i < cnbrList.size(); i++) {
+            cnbrOrderedList[0].add(orderedTagName.get(i).get("tag_name"));
+            cnbrOrderedList[1].add((int)(long)cnbrList.get(i).get("commitNums"));
+        }
+
+        return cnbrOrderedList;
     }
 
     @Override

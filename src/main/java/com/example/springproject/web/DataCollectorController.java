@@ -11,51 +11,51 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/fastjson/dataCollector")
 public class DataCollectorController {
 
-  @Autowired
-  DataCollectorDao dataCollectorDao;
+    @Autowired
+    DataCollectorDao dataCollectorDao;
 
-  @GetMapping("/collectContributors")
-  public void collectContributors() {
-    System.out.println("Collecting contributors...");
-    dataCollectorDao.collectContributors();
-    System.out.println("Collecting contributors completed!");
-  }
+    @GetMapping("/collectContributors")
+    public void collectContributors() {
+        System.out.println("Collecting contributors...");
+        dataCollectorDao.collectContributors();
+        System.out.println("Collecting contributors completed!");
+    }
 
-  @GetMapping("/collectIssues")
-  public void collectIssues() {
-    System.out.println("Collecting issues...");
-    dataCollectorDao.collectIssues();
-    System.out.println("Collecting issues completed!");
-  }
+    @GetMapping("/collectIssues")
+    public void collectIssues() {
+        System.out.println("Collecting issues...");
+        dataCollectorDao.collectIssues();
+        System.out.println("Collecting issues completed!");
+    }
 
-  @GetMapping("/collectReleases")
-  public void collectReleases() {
-    System.out.println("Collecting releases...");
-    dataCollectorDao.collectReleases();
-    System.out.println("Collecting releases completed!");
-  }
+    @GetMapping("/collectReleases")
+    public void collectReleases() {
+        System.out.println("Collecting releases...");
+        dataCollectorDao.collectReleases();
+        System.out.println("Collecting releases completed!");
+    }
 
-  @GetMapping("/collectCommits")
-  public void collectCommits() {
-    System.out.println("Collecting commits...");
-    dataCollectorDao.collectCommits();
-    System.out.println("Collecting commits completed!");
-  }
+    @GetMapping("/collectCommits")
+    public void collectCommits() {
+        System.out.println("Collecting commits...");
+        dataCollectorDao.collectCommits();
+        System.out.println("Collecting commits completed!");
+    }
 
-  @GetMapping("/collectComments")
-  public void collectComments() {
-    System.out.println("Collecting comments...");
-    dataCollectorDao.collectComments();
-    System.out.println("Collecting comments completed!");
-  }
+    @GetMapping("/collectComments")
+    public void collectComments() {
+        System.out.println("Collecting comments...");
+        dataCollectorDao.collectComments();
+        System.out.println("Collecting comments completed!");
+    }
 
-  @GetMapping("/collectKeywords")
-  public void collectKeywords() {
-    System.out.println("Collecting keywords...");
-    dataCollectorDao.collectKeyWordsInIssueTitles();
-    dataCollectorDao.collectKeyWordsInIssueDescriptions();
-    System.out.println("Collecting keywords completed!");
-  }
+    @GetMapping("/collectKeywords")
+    public void collectKeywords() {
+        System.out.println("Collecting keywords...");
+        dataCollectorDao.collectKeyWordsInIssueTitles();
+        dataCollectorDao.collectKeyWordsInIssueDescriptions();
+        System.out.println("Collecting keywords completed!");
+    }
 
 
 }
